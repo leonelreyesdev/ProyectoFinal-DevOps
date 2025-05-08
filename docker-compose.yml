@@ -1,0 +1,29 @@
+version: "3.9"
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: mysql_login_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: Hiale12345678
+      MYSQL_DATABASE: ProyectoFinal_DevOpsDB
+    ports:
+      - "3307:3306"
+
+    volumes:
+      - db_data:/var/lib/mysql
+
+  app:
+    build: .
+    container_name: sistema_login_app
+    depends_on:
+      - db
+    volumes:
+      - .:/app
+    command: ["python", "login.py"]
+    stdin_open: true
+    tty: true
+
+volumes:
+  db_data:

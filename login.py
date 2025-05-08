@@ -20,7 +20,7 @@ fernet = Fernet(clave_encriptacion)
 # === Conexión a la base de datos ===
 def conectar():
     return mysql.connector.connect(
-        host="127.0.0.1",
+        host="db",
         user="root",
         password="Hiale12345678",
         database="ProyectoFinal_DevOpsDB"
@@ -48,6 +48,9 @@ def crear_usuario():
     curp_encriptado = fernet.encrypt(curp.encode())
     rfc_encriptado = fernet.encrypt(rfc.encode())
 
+    conn = None
+    cursor = None
+
     try:
         conn = conectar()
         cursor = conn.cursor()
@@ -69,8 +72,10 @@ def crear_usuario():
     except mysql.connector.Error as err:
         print(f"❌ Error al registrar: {err}")
     finally:
-        cursor.close()
-        conn.close()
+        if cursor is not None:
+            cursor.close()
+        if conn is not None and conn.is_connected():
+            conn.close()
 
 # === Iniciar sesión ===
 def login():
